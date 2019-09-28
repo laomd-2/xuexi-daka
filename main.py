@@ -31,7 +31,7 @@ def upsert(user, title_or_thinking, text, time):
     with sqlite3.connect('party.db3') as con:
         con.set_trace_callback(logger.info)
         cur = con.cursor()
-        time_filter = "time >= '{today} 00:00:00' and time <= '{today} 23:59:59'".format(today=time.split(' ')[0])
+        time_filter = "datetime(time) >= '{today} 00:00:00' and datetime(time) <= '{today} 23:59:59'".format(today=time.split(' ')[0])
         # ensure unique
         cur.execute("select id from sharing where name='%s' and title is not null and thinking is not null\
             and %s limit 2" % (user, time_filter))
