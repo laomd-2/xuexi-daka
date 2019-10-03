@@ -2,8 +2,14 @@ import settings
 import wxpy
 import time
 import logging
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base()
 
 bot: wxpy.Bot = None
+engine = create_engine('sqlite:///%s?check_same_thread=False' % settings.db_name, echo=True)
+Session = sessionmaker(bind=engine)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('xuexi')
 
@@ -14,5 +20,6 @@ def start():
                        cache_path=getattr(settings, 'cache_file', None))
         for module in settings.install_apps:
             __import__(module)
+        Base.metadata.create_all(engine)
         bot.join()
         time.sleep(2)

@@ -1,8 +1,10 @@
+import os
 import pandas as pd
-import sqlite3
 import datetime
 import settings
-from core import bot, logger
+from .models import Sharing
+from sqlalchemy import func, desc
+from core import bot, logger, engine, Session
 
 
 def to_excel(table, filename):
@@ -16,15 +18,13 @@ def to_excel(table, filename):
 
 def send_report():
     from_time = settings.from_time
-    with sqlite3.connect('party.db3') as con:
-        con.set_trace_callback(logger.info)
-        cur = con.cursor()
-        cur.execute("select name, count(*) * 0.2 as credit from sharing \
-            where title is not null and thinking is not null\
-                 and datetime(time)>='%s'\
-            group by name order by credit desc" % from_time)
+    session = Session()
+    res = '累计打卡(%s起)\n' % from_time
+    for row in session.query(Sharing.name, func.count().label('credit')).group_by(Sharing.name).order_by(desc('credit')):
+        res += '    %s: %.1f\n' % (row.name, row.credit * 0.2)
+    with engine.connect() as con:
         today_daka = pd.read_sql_query(
-            "select * from sharing where date(time) >= date('now')", con)
+            "select id,name,title,thinking,strftime('%Y-%m-%d %H:%M:%S', time) as time from sharing where date(time) >= date('now')", con)
         today_daka.rename(inplace=True, columns={
             'id': '序号',
             'name': '姓名',
@@ -32,13 +32,12 @@ def send_report():
             'thinking': '感想',
             'time': '时间'
         })
-        now = datetime.datetime.now().strftime('%Y-%m-%d %H.%M.%S')
-        today, time = now.split(' ')
-        filename = "daka/{today}(00.00.00-{time}).xlsx".format(**locals())
+        now = datetime.datetime.now()
+        if not os.path.isdir('daka'):
+            os.mkdir('daka')
+        filename = "daka/%s(00.00.00-%s).xlsx" % (now.date().strftime('%Y-%m-%d'), now.time().strftime('%H.%M.%S'))
         to_excel(today_daka, filename)
-        res = '累计打卡(%s起)\n' % from_time
-        for row in cur.fetchall():
-            res += '    %s: %.1f\n' % (row[0], round(row[1], 1))
-        for group in bot.groups().search(settings.notice_group_name):
-            group.send(res)
-            group.send_file(filename)
+        
+    for group in bot.groups().search(settings.notice_group_name):
+        group.send(res)
+        group.send_file(filename)
