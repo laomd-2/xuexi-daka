@@ -1,4 +1,4 @@
-import os
+﻿import os
 import pandas as pd
 import datetime
 import settings
@@ -20,7 +20,10 @@ def send_report():
     from_time = settings.from_time
     session = Session()
     res = '累计打卡(%s起)\n' % from_time
-    for row in session.query(Sharing.name, func.count().label('credit')).group_by(Sharing.name).order_by(desc('credit')):
+    for row in session.query(Sharing.name, func.count().label('credit'))\
+                               .filter(Sharing.title.isnot(None) & Sharing.thinking.isnot(None))\
+                               .group_by(Sharing.name)\
+                               .order_by(desc('credit')):
         res += '    %s: %.1f\n' % (row.name, row.credit * 0.2)
     with engine.connect() as con:
         today_daka = pd.read_sql_query(

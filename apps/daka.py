@@ -1,4 +1,4 @@
-import wxpy
+﻿import wxpy
 import settings
 import threading
 from collections import defaultdict
@@ -6,6 +6,7 @@ from core import bot, logger, Session
 from datetime import timedelta
 from sqlalchemy import func
 from sqlalchemy.orm.exc import StaleDataError
+from sqlalchemy.exc import IntegrityError
 from xml.etree import ElementTree as ETree
 from .models import Sharing
 
@@ -45,9 +46,10 @@ def upsert(user, title_or_thinking, text, time):
     setattr(sharing, title_or_thinking, text)
     try:
         session.commit()
+    except IntegrityError:
+        logger.warning('conflict %s: %s' % (title_or_thinking, text))
     except StaleDataError:
         logger.warning('conflict %s: %s' % (title_or_thinking, text))
-
 
 @bot.register(bot.groups().search(settings.group_name), [wxpy.SHARING, wxpy.TEXT, wxpy.NOTE], except_self=False)
 def on_msg(msg):

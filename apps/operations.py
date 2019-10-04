@@ -1,4 +1,4 @@
-import wxpy
+﻿import wxpy
 import settings
 from core import bot, logger, Session
 from wxpy.utils.misc import get_text_without_at_bot
@@ -6,7 +6,7 @@ from .models import Sharing
 from .common import send_report
 
 
-@bot.register(bot.search(settings.notice_group_name), wxpy.TEXT, except_self=False)
+@bot.register(bot.groups().search(settings.notice_group_name), wxpy.TEXT, except_self=False)
 def operations(msg):
     if msg.is_at:
         text = get_text_without_at_bot(msg).strip()

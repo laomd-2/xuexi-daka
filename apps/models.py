@@ -12,6 +12,6 @@ class Sharing(Base):
     time = Column(DateTime, nullable=False, index=True)
 
     __table_args__ = (
-        UniqueConstraint('name', 'title', sqlite_on_conflict='IGNORE'),
-        UniqueConstraint('thinking', sqlite_on_conflict='IGNORE')
+        UniqueConstraint('name', 'title', sqlite_on_conflict='FAIL'),
+        #UniqueConstraint('thinking', sqlite_on_conflict='FAIL')
     )
