@@ -34,6 +34,8 @@ def upsert(user, title_or_thinking, text, time):
         return
 
     sharing = session.query(Sharing).filter(
+        (Sharing.time >= today) &
+        (Sharing.time < tomorrow) &
         (Sharing.name == user) & 
         (getattr(Sharing, title_or_thinking) == None)
     ).first()
