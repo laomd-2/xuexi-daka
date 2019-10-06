@@ -13,6 +13,10 @@ def to_excel(table, filename):
     worksheet = writer.sheets['Sheet1']
     worksheet.set_column('C:C', 50)
     worksheet.set_column('E:E', 20)
+    format_invalid_data = workbook.add_format({'font_color': 'red'})
+    for index, row in table.iterrows():
+        if not row['标题'] or not row['感想']:
+            worksheet.set_row(index, cell_format=format_invalid_data)
     writer.save()
 
 
