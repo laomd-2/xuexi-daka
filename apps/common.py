@@ -10,6 +10,7 @@ from core import bot, logger, engine, Session
 def to_excel(table, filename):
     writer = pd.ExcelWriter(filename, engine='xlsxwriter')
     table.to_excel(writer, index=False, sheet_name='Sheet1')
+    workbook  = writer.book
     worksheet = writer.sheets['Sheet1']
     worksheet.set_column('C:C', 50)
     worksheet.set_column('E:E', 20)
