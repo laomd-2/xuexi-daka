@@ -17,7 +17,7 @@ def to_excel(table, filename):
     format_invalid_data = workbook.add_format({'font_color': 'red'})
     for index, row in table.iterrows():
         if not row['标题'] or not row['感想']:
-            worksheet.set_row(index, cell_format=format_invalid_data)
+            worksheet.set_row(index + 1, cell_format=format_invalid_data)
     writer.save()
 
 
