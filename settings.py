@@ -15,4 +15,7 @@ notice_group_name = '打卡结果群'
 min_thinking_len = 50
 max_daka_per_day = 2
 from_time = '2019-09-29 07:00:00'
-db_name = 'party.db3'
+#db_uri = 'sqlite:///party.db3?check_same_thread=False'
+
+password = open("dbpass").read()
+db_uri = 'postgresql+psycopg2://postgres:%s@localhost/party' % password

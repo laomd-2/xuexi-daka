@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 bot: wxpy.Bot = None
-engine = create_engine('sqlite:///%s?check_same_thread=False' % settings.db_name, echo=True)
+engine = create_engine(settings.db_uri)
 Session = sessionmaker(bind=engine)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('xuexi')
