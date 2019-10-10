@@ -48,10 +48,12 @@ def upsert(user, title_or_thinking, text, time):
     setattr(sharing, title_or_thinking, text)
     try:
         session.commit()
-    except IntegrityError:
-        logger.warning('conflict %s: %s' % (title_or_thinking, text))
-    except StaleDataError:
-        logger.warning('conflict %s: %s' % (title_or_thinking, text))
+    except IntegrityError as e:
+        logger.error(str(e))
+        logger.warning('conflict %s from %s: %s' % (title_or_thinking, user, text))
+    except StaleDataError as e:
+        logger.error(str(e))
+        logger.warning('conflict %s from %s: %s' % (title_or_thinking, user, text))
 
 @bot.register(bot.groups().search(settings.group_name), [wxpy.SHARING, wxpy.TEXT, wxpy.NOTE], except_self=False)
 def on_msg(msg):

@@ -32,7 +32,7 @@ def send_report():
         res += '    %s: %.1f\n' % (row.name, row.credit * 0.2)
     with engine.connect() as con:
         today_daka = pd.read_sql_query(
-            "select * from sharing where date(time) >= current_date", con)
+            "select * from sharing where date(time) >= current_date order by id desc", con)
         today_daka.rename(inplace=True, columns={
             'id': '序号',
             'name': '姓名',
