@@ -15,7 +15,7 @@ def operations(msg):
         elif '打卡改名为' in text:
             origin, new = text.split('打卡改名为')
             session = Session()
-            sharings = session.query(Sharing).filter(Sharing.name == origin).all()
+            sharings = session.query(Sharing).filter(Sharing.name.like('%' + origin + '%')).all()
             for s in sharings:
                 s.name = new
             session.commit()
