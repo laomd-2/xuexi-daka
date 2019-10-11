@@ -13,7 +13,7 @@ def operations(msg):
         if '今日打卡' == text:
             send_report()
         elif '打卡改名为' in text:
-            if not msg.sender == bot.self:
+            if msg.sender != bot.self:
                 return "没有权限"
             origin, new = text.split('打卡改名为')
             session = Session()
