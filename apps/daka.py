@@ -73,7 +73,6 @@ def on_msg(msg):
             with locks[from_user]:
                 session = Session()
                 title_or_thinking=get_column(revoked_msg.type)
-                sharing = session.query(Sharing).filter(name=from_user).filter(
                 sharing = session.query(Sharing).filter(Sharing.name==from_user).filter(
                     getattr(Sharing, title_or_thinking) == revoked_msg.text).first()
                 setattr(sharing, title_or_thinking, None)
