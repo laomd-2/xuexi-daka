@@ -8,7 +8,7 @@ from .common import send_report
 
 @bot.register(bot.groups().search(settings.notice_group_name), wxpy.TEXT, except_self=False)
 def operations(msg):
-    if msg.is_at:
+    if True or msg.is_at:
         text = get_text_without_at_bot(msg).strip()
         if '今日打卡' == text:
             send_report()
